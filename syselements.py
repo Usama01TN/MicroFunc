@@ -51,7 +51,7 @@ def createDesktopShortcut(shortcut_name, target_path, icon_path=None, arguments=
     :param exist_ok: (bool)
     :return: bool
     """
-    if not hasattr(arguments, 'encode'):
+    if arguments and not hasattr(arguments, 'encode'):
         arguments = ' '.join(arguments)  # type: str
     if isMobile:
         print("Unsupported platform:", osName)
@@ -107,7 +107,7 @@ def createDesktopShortcut(shortcut_name, target_path, icon_path=None, arguments=
         _Release = WINFUNCTYPE(HRESULT)(2, "Release")  # type: WINFUNCTYPE
         _Save = WINFUNCTYPE(HRESULT, c_wchar_p, BOOL)(6, "Save")  # type: WINFUNCTYPE
         _SetPath = WINFUNCTYPE(HRESULT, c_wchar_p)(20, "SetPath")  # type: WINFUNCTYPE
-        _SetArguments = WINFUNCTYPE(HRESULT, c_wchar_p)(12, "SetArguments")  # type: WINFUNCTYPE
+        _SetArguments = WINFUNCTYPE(HRESULT, c_wchar_p)(11, "SetArguments")  # type: WINFUNCTYPE
         _SetDescription = WINFUNCTYPE(HRESULT, c_wchar_p)(7, "SetDescription")  # type: WINFUNCTYPE
         _SetIconLocation = WINFUNCTYPE(HRESULT, c_wchar_p, c_int)(17, "SetIconLocation")  # type: WINFUNCTYPE
         _SetValue = WINFUNCTYPE(HRESULT, c_void_p, c_void_p)(6, "SetValue")  # type: WINFUNCTYPE
@@ -120,7 +120,7 @@ def createDesktopShortcut(shortcut_name, target_path, icon_path=None, arguments=
             _CoCreateInstance(_CLSID_ShellLink, None, _CLSCTX_INPROC_SERVER, _IID_IShellLinkW, byref(p_link))
             _SetPath(p_link, c_wchar_p(target_path))
             if arguments:
-                _SetArguments(p_link, c_wchar_p(arguments))
+                _SetArguments(p_link, arguments)
             _SetDescription(p_link, p_app_id)
             if icon_path:
                 _SetIconLocation(p_link, c_wchar_p(icon_path), 0)
